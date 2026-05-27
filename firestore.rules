@@ -1,0 +1,126 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global Safety Net - catches everything by default
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Reuseable global primitives
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // 1. PROFILES Ref - /profiles/{userId}
+    match /profiles/{userId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() 
+        && isOwner(userId)
+        && isValidId(userId)
+        && incoming().userId == userId
+        && incoming().createdAt is string
+        && incoming().updatedAt is string
+        && isValidProfile(incoming());
+        
+      allow update: if isSignedIn()
+        && isOwner(userId)
+        && incoming().userId == userId
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt is string
+        && isValidProfile(incoming());
+
+      allow delete: if isSignedIn() && isOwner(userId);
+    }
+
+    function isValidProfile(data) {
+      return data.userId is string && data.userId.size() <= 128
+        && data.name is string && data.name.size() <= 128
+        && data.role is string && data.role.size() <= 64
+        && data.email is string && data.email.size() <= 128
+        && (data.get('phone', '') is string && data.get('phone', '').size() <= 32)
+        && (data.get('bio', '') is string && data.get('bio', '').size() <= 2000)
+        && (data.get('availability', '') is string && data.get('availability', '').size() <= 64);
+    }
+
+    // 2. PROJECTS Ref - /projects/{projectId}
+    match /projects/{projectId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn()
+        && isValidId(projectId)
+        && incoming().projectId == projectId
+        && incoming().producerId == request.auth.uid
+        && incoming().createdAt is string
+        && incoming().updatedAt is string
+        && isValidProject(incoming());
+
+      allow update: if isSignedIn()
+        && (existing().producerId == request.auth.uid || incoming().crewMembers != null)
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt is string
+        && isValidProject(incoming());
+
+      allow delete: if isSignedIn() && existing().producerId == request.auth.uid;
+    }
+
+    function isValidProject(data) {
+      return data.projectId is string && data.projectId.size() <= 128
+        && data.title is string && data.title.size() <= 256
+        && data.producerId is string && data.producerId.size() <= 128
+        && (data.get('description', '') is string && data.get('description', '').size() <= 4000)
+        && (data.get('producerName', '') is string && data.get('producerName', '').size() <= 128)
+        && (data.get('status', '') is string && data.get('status', '').size() <= 64)
+        && (data.get('totalBudget', 0) is number)
+        && (data.get('departmentBudgets', {}) is map)
+        && (data.get('expenses', []) is list)
+        && (data.get('crewMembers', []) is list);
+    }
+
+    // 3. SCHEDULES Ref - /schedules/{scheduleId}
+    match /schedules/{scheduleId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn()
+        && isValidId(scheduleId)
+        && incoming().scheduleId == scheduleId
+        && incoming().createdAt is string
+        && incoming().updatedAt is string
+        && isValidSchedule(incoming());
+
+      allow update: if isSignedIn()
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt is string
+        && isValidSchedule(incoming());
+
+      allow delete: if isSignedIn();
+    }
+
+    function isValidSchedule(data) {
+      return data.scheduleId is string && data.scheduleId.size() <= 128
+        && data.projectId is string && data.projectId.size() <= 128
+        && data.date is string && data.date.size() <= 32
+        && data.location is string && data.location.size() <= 512
+        && data.callTime is string && data.callTime.size() <= 32
+        && (data.get('projectTitle', '') is string && data.get('projectTitle', '').size() <= 256)
+        && (data.get('callSheetUrl', '') is string && data.get('callSheetUrl', '').size() <= 1024)
+        && (data.get('productionNotes', '') is string && data.get('productionNotes', '').size() <= 5000)
+        && (data.get('crewList', []) is list)
+        && (data.get('googleEventId', '') is string && data.get('googleEventId', '').size() <= 256);
+    }
+  }
+}

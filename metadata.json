@@ -1,0 +1,6 @@
+{
+  "name": "FILM HUB",
+  "description": "Intelligent Crew Selection & Budget Matching System that automates crew recruitment, department budgeting, and production schedule synchronization.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

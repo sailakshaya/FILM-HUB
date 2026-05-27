@@ -1,0 +1,83 @@
+{
+  "entities": {
+    "Profile": {
+      "title": "Profile",
+      "description": "User profile with cinematic experience, role, skills, budget requirements, and portfolio information.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "name": { "type": "string" },
+        "role": { "type": "string" },
+        "skills": { "type": "array" },
+        "experience": { "type": "integer" },
+        "budgetExpectation": { "type": "number" },
+        "availability": { "type": "string" },
+        "bio": { "type": "string" },
+        "languages": { "type": "array" },
+        "ratings": { "type": "number" },
+        "portfolioUrls": { "type": "array" },
+        "previousProjects": { "type": "array" },
+        "email": { "type": "string" },
+        "phone": { "type": "string" },
+        "socialLinks": { "type": "object" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "name", "role", "email", "createdAt", "updatedAt"]
+    },
+    "Project": {
+      "title": "Project",
+      "description": "Production metadata tracking crew, departmental budgets, and production expenses.",
+      "type": "object",
+      "properties": {
+        "projectId": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "producerId": { "type": "string" },
+        "producerName": { "type": "string" },
+        "status": { "type": "string" },
+        "totalBudget": { "type": "number" },
+        "departmentBudgets": { "type": "object" },
+        "expenses": { "type": "array" },
+        "crewMembers": { "type": "array" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["projectId", "title", "producerId", "createdAt", "updatedAt"]
+    },
+    "Schedule": {
+      "title": "Schedule",
+      "description": "Shoot dates, locations, call times, production notes, call sheets, and Google Calendar event references.",
+      "type": "object",
+      "properties": {
+        "scheduleId": { "type": "string" },
+        "projectId": { "type": "string" },
+        "projectTitle": { "type": "string" },
+        "date": { "type": "string" },
+        "location": { "type": "string" },
+        "callTime": { "type": "string" },
+        "callSheetUrl": { "type": "string" },
+        "productionNotes": { "type": "string" },
+        "crewList": { "type": "array" },
+        "googleEventId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["scheduleId", "projectId", "date", "location", "callTime", "createdAt", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "/profiles/{userId}": {
+      "schema": "Profile",
+      "description": "Dynamic crew profiles indexed by Google uid. Fully searchable by authenticated producers."
+    },
+    "/projects/{projectId}": {
+      "schema": "Project",
+      "description": "Production metadata, budget tracking, and crew lists."
+    },
+    "/schedules/{scheduleId}": {
+      "schema": "Schedule",
+      "description": "Production shoot dates, call times, call sheets, and sync references."
+    }
+  }
+}

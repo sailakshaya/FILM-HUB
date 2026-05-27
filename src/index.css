@@ -1,0 +1,86 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Space Grotesk", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  --color-cream: #FAF5EF;
+  --color-beige: #F5EFEB;
+  --color-warmbrown: #3E2723;
+  --color-lightgold: #D4AF37;
+  --color-navy: #0A192F;
+}
+
+/* Custom cinematic global styling elements */
+body {
+  font-family: var(--font-sans);
+  background-color: #FAF5EF; /* Warm cream background */
+  color: #3E2723; /* Warm brown text */
+}
+
+h1, h2, h3, h4, .cinematic-heading {
+  font-family: var(--font-display);
+  letter-spacing: 0.05em;
+}
+
+/* GSI Google sign-in button overrides */
+.gsi-material-button {
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  -webkit-appearance: none;
+  background-color: #FAF5EF;
+  background-image: none;
+  border: 1px solid #3E2723;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  color: #3E2723;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 500;
+  height: 38px;
+  letter-spacing: 0.21px;
+  outline: none;
+  padding: 0 12px;
+  position: relative;
+  text-align: center;
+  text-decoration: none;
+  text-transform: none;
+  transition: background-color .21s, border-color .21s, box-shadow .21s;
+  width: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gsi-material-button:hover {
+  background-color: #F5EFEB;
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+}
+
+.gsi-material-button-content-wrapper {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  justify-content: space-between;
+  position: relative;
+  width: 100%;
+}
+
+.gsi-material-button-icon {
+  height: 18px;
+  margin-right: 8px;
+  min-width: 18px;
+  width: 18px;
+}
+
+.gsi-material-button-contents {
+  flex-grow: 1;
+  text-align: left;
+}
